@@ -7,7 +7,7 @@ import { Button } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add';
 
 
-export const AddUser = () => {
+export const AddUser = ({ setLoadingData }) => {
 
     const [formData, SetFormData] = useState({
         Name: "",
@@ -31,9 +31,9 @@ export const AddUser = () => {
     const DobClean = (value) => {
         if (value) {
             var day = value.getDate();
-            var month = value.getMonth();
+            var month = value.getMonth() + 1;
             var year = value.getFullYear();
-            var string = day + '-' + month + '-' + year;
+            var string = month + '/' + day + '/' + year;
             return string
         }
 
@@ -90,8 +90,8 @@ export const AddUser = () => {
             axios.post("http://localhost:5000/api/v1/posts/", formData)
                 .then((response) => {
                     swal("saved", "Your data saved in Database you can view ", "success");
-                    window.location.reload(false);
                     console.log(response);
+                    setLoadingData(true)
                 });
         }
     };

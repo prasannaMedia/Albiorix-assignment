@@ -16,8 +16,6 @@ export const EditUser = (props) => {
         NumberError: "",
         DOBError: ""
     });
-
-
     const [show, setShow] = useState(true);
     const handleClose = () => setShow(false);
     const [value, onChange] = useState(new Date());
@@ -37,9 +35,9 @@ export const EditUser = (props) => {
     const DobClean = (value) => {
         if (value) {
             var day = value.getDate();
-            var month = value.getMonth();
+            var month = value.getMonth() + 1;
             var year = value.getFullYear();
-            var string = day + '-' + month + '-' + year;
+            var string = month + '/' + day + '/' + year;
             return string
         }
 
@@ -87,6 +85,7 @@ export const EditUser = (props) => {
         return true
 
     }
+    console.log("loader", props.setLoadingData)
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -96,11 +95,8 @@ export const EditUser = (props) => {
             axios.post("http://localhost:5000/api/v1/posts/", formData)
                 .then((response) => {
                     swal("saved", "updated in DB", "success");
-                    props.setOnEdit(true)
                     props.checkModal(false)
-
                 });
-
         }
     };
 

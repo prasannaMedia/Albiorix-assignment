@@ -12,7 +12,7 @@ import TableRow from '@material-ui/core/TableRow'
 
 
 
-export const FilteringTable = ({ columns, data, ...rest }) => {
+export const FilteringTable = ({ columns, data ,setLoadingData,...rest}) => {
 
     const {
         getTableProps,
@@ -69,7 +69,7 @@ export const FilteringTable = ({ columns, data, ...rest }) => {
                     <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
                 </Col>
                 <Col sm={6} lg={2} className="mb-3 mt-2" >
-                    <AddUser />
+                    <AddUser setLoadingData={setLoadingData} />
                 </Col>
             </Row>
             <MaUTable {...getTableProps()}>
