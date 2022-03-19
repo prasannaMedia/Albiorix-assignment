@@ -1,6 +1,5 @@
 import React from 'react'
 import './App.css'
-import { FilteringTable } from './components/FiltertingTable'
 import Main from './components/Main'
 import 'bootstrap/dist/css/bootstrap.min.css';
 

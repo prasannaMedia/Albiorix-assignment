@@ -1,18 +1,18 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { useTable, useFilters, useGlobalFilter, useSortBy } from 'react-table'
 import './table.css'
 import { GlobalFilter } from './GlobalFilter'
 import { AddUser } from './AddUser'
 import { Col, Row } from 'react-bootstrap'
+import MaUTable from '@material-ui/core/Table'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
 
-export const FilteringTable = ({ columns, data }) => {
 
-    // const defaultColumn = React.useMemo(
-    //     () => ({
-    //         Filter: ColumnFilter
-    //     }),
-    //     []
-    // )
+
+export const FilteringTable = ({ columns, data, ...rest }) => {
 
     const {
         getTableProps,
@@ -27,12 +27,37 @@ export const FilteringTable = ({ columns, data }) => {
         {
             columns,
             data,
+            initialState: {
+                sortBy: [
+                    {
+                        id: 'Number',
+                        desc: true
+                    }, {
+                        id: 'Name',
+                        desc: true
+                    },
+                    {
+                        id: 'Email',
+                        desc: true
+                    },
+                    {
+                        id: 'DOB',
+                        desc: true
+                    },
+                    {
+                        id: 'Action',
+                        desc: true
+                    }
+
+                ]
+            }
+
             // defaultColumn
         },
         useFilters,
         useGlobalFilter,
         useSortBy,
-        
+
     )
 
     const { globalFilter } = state
@@ -47,8 +72,8 @@ export const FilteringTable = ({ columns, data }) => {
                     <AddUser />
                 </Col>
             </Row>
-            <table {...getTableProps()}>
-                <thead>
+            <MaUTable {...getTableProps()}>
+                <TableHead>
                     {headerGroups.map(headerGroup => (
                         <tr {...headerGroup.getHeaderGroupProps()}>
                             {headerGroup.headers.map(column => (
@@ -65,29 +90,29 @@ export const FilteringTable = ({ columns, data }) => {
                             ))}
                         </tr>
                     ))}
-                </thead>
-                <tbody {...getTableBodyProps()}>
+                </TableHead>
+                <TableBody {...getTableBodyProps()}>
                     {rows.map(row => {
                         prepareRow(row)
                         return (
-                            <tr {...row.getRowProps()}>
+                            <TableRow {...row.getRowProps()}>
                                 {row.cells.map(cell => {
-                                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                                    return <TableCell {...cell.getCellProps()}>{cell.render('Cell')}</TableCell>
                                 })}
-                            </tr>
+                            </TableRow>
                         )
                     })}
-                </tbody>
+                </TableBody>
                 <tfoot>
                     {footerGroups.map(footerGroup => (
-                        <tr {...footerGroup.getFooterGroupProps()}>
+                        <TableRow {...footerGroup.getFooterGroupProps()}>
                             {footerGroup.headers.map(column => (
                                 <td {...column.getFooterProps()}>{column.render('Footer')}</td>
                             ))}
-                        </tr>
+                        </TableRow>
                     ))}
                 </tfoot>
-            </table>
+            </MaUTable>
         </>
     )
 }

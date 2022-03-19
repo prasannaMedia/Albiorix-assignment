@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Modal, FormGroup, Form } from 'react-bootstrap'
+import { Modal, Form } from 'react-bootstrap'
 import DateTimePicker from 'react-datetime-picker';
 import axios from "axios";
+import { Button } from '@material-ui/core'
 import swal from 'sweetalert';
-
-
 
 export const EditUser = (props) => {
     const [formData, SetFormData] = useState({
@@ -21,13 +20,10 @@ export const EditUser = (props) => {
 
     const [show, setShow] = useState(true);
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
     const [value, onChange] = useState(new Date());
-    const [load, setLoad] = useState(false)
-    formData.DOB = value
+
     useEffect(() => {
         const cell = props.cell.row.original
-        console.log(cell.Name)
         SetFormData(
             {
                 Name: cell.Name,
@@ -36,12 +32,22 @@ export const EditUser = (props) => {
                 DOB: cell.DOB
             }
         )
-    }, [])
+    }, [props.cell.row.original])
 
+    const DobClean = (value) => {
+        if (value) {
+            var day = value.getDate();
+            var month = value.getMonth();
+            var year = value.getFullYear();
+            var string = day + '-' + month + '-' + year;
+            return string
+        }
+
+    }
+    formData.DOB = DobClean(value)
 
     const onChangeInput = (e) =>
         SetFormData({ ...formData, [e.target.name]: e.target.value });
-
 
 
     const validate = () => {
@@ -85,15 +91,16 @@ export const EditUser = (props) => {
     const onSubmit = async (e) => {
         e.preventDefault();
         const isValid = validate()
-
         if (isValid) {
             console.log(formData)
             axios.post("http://localhost:5000/api/v1/posts/", formData)
                 .then((response) => {
                     swal("saved", "updated in DB", "success");
+                    props.setOnEdit(true)
+                    props.checkModal(false)
 
                 });
-            props.checkModal(false)
+
         }
     };
 
@@ -105,8 +112,8 @@ export const EditUser = (props) => {
     return (
         <>
             <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Update</Modal.Title>
+                <Modal.Header closeButton   >
+                    <Modal.Title>UPDATE USER</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={(e) => {
@@ -142,16 +149,18 @@ export const EditUser = (props) => {
 
 
                         <Form.Group className="mb-3" >
-                            <Form.Label>Date of Birth: </Form.Label>
+                            <Form.Label className=' d-block'>DATE OF BIRTH</Form.Label>
                             <DateTimePicker
                                 onChange={onChange}
                                 value={value}
+                                disableClock={"true"}
+                                format={"y-MM-dd"}
                             />
                         </Form.Group>
                         <span style={{ color: "red" }} >{formData.DOBError ? (formData.DOBError) : ""}</span>
 
 
-                        <Button variant="primary" type="submit">
+                        <Button variant="contained" color='primary' type="submit">
                             Submit
                         </Button>
                     </Form></Modal.Body>

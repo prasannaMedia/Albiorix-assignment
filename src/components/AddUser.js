@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { Button, Modal, FormGroup, Form } from 'react-bootstrap'
+import React, { useState, } from 'react'
+import { Modal, Form } from 'react-bootstrap'
 import DateTimePicker from 'react-datetime-picker';
 import axios from "axios";
 import swal from 'sweetalert';
-
+import { Button } from '@material-ui/core'
+import AddIcon from '@material-ui/icons/Add';
 
 
 export const AddUser = () => {
@@ -23,10 +24,21 @@ export const AddUser = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const [value, onChange] = useState(new Date());
-    formData.DOB = value
+
     const onChangeInput = (e) =>
         SetFormData({ ...formData, [e.target.name]: e.target.value });
 
+    const DobClean = (value) => {
+        if (value) {
+            var day = value.getDate();
+            var month = value.getMonth();
+            var year = value.getFullYear();
+            var string = day + '-' + month + '-' + year;
+            return string
+        }
+
+    }
+    formData.DOB = DobClean(value)
 
     const validate = () => {
 
@@ -37,7 +49,7 @@ export const AddUser = () => {
 
         }
         let EmailError = ""
-        if (!formData.Email.includes("@")) {
+        if (!formData.Email) {
             EmailError = "invalidEmail"
 
         }
@@ -68,8 +80,10 @@ export const AddUser = () => {
 
 
 
+
     const onSubmit = async (e) => {
         e.preventDefault();
+        DobClean()
         const isValid = validate()
         if (isValid) {
             console.log(formData)
@@ -82,20 +96,17 @@ export const AddUser = () => {
         }
     };
 
-
-
-
-
-
     return (
+
         <>
-            <Button variant="primary" onClick={handleShow}>
+            <Button variant="contained" color="primary" onClick={handleShow}>
+                <AddIcon />
                 Add New user
             </Button>
-
-            <Modal show={show} onHide={handleClose}>
+            <Modal show={show} onHide={handleClose} size="md"
+            >
                 <Modal.Header closeButton>
-                    <Modal.Title>Add New User</Modal.Title>
+                    <Modal.Title  >ADD USER</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={(e) => {
@@ -132,14 +143,16 @@ export const AddUser = () => {
 
 
                         <Form.Group className="mb-3" >
+                            <Form.Label className=' d-block'>DATE OF BIRTH</Form.Label>
                             <DateTimePicker
                                 onChange={onChange}
                                 value={value}
                             />
+
                         </Form.Group>
                         <span style={{ color: "red" }} >{formData.DOBError ? (formData.DOBError) : ""}</span>
 
-                        <Button variant="primary" type="submit">
+                        <Button variant="contained" color='primary' type="submit">
                             Submit
                         </Button>
                     </Form></Modal.Body>

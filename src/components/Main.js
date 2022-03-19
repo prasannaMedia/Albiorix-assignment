@@ -3,19 +3,30 @@ import axios from "axios";
 import { FilteringTable } from "./FiltertingTable";
 import swal from 'sweetalert';
 import { EditUser } from "./EditUser";
+import { Button } from '@material-ui/core'
+import Loader from './486.gif'
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+
+
+
+
+
+
+
+
+
 
 function Main() {
-
 
     const [loadingData, setLoadingData] = useState(true);
     const [show, setShow] = useState(false);
     const [cell, setCell] = useState(null)
-
+    const [onEdit, setOnEdit] = useState(false)
 
     const checkModal = (props) => {
-        setShow(props.show)
+        setShow(props)
         setCell(null)
-
     }
     const deleteRowConfirmation = (row) => {
         swal({
@@ -46,45 +57,48 @@ function Main() {
 
     const columns = useMemo(() => [
         {
-            Header: "Name",
+            Header: "NAME",
             accessor: "Name",
         },
         {
-            Header: "Email",
+            Header: "EMAIL",
             accessor: "Email",
         },
         {
-            Header: "Number",
+            Header: "NUMBER",
             accessor: "Number",
         },
         {
             Header: "DOB",
             accessor: "DOB",
 
+
         }, {
             width: 700,
-            Header: "Action",
+            Header: "ACTION",
             Cell: ({ cell }) => (
                 <div className="d-flex justify-content-around" >
                     <div >
-                        <button className="btn btn-primary p-2" onClick={() => {
+                        <Button className="p-2" variant="contained" color="primary" onClick={() => {
                             setShow(true)
                             setCell(cell)
                         }}>
-                            Edit
-                        </button>
+                            <EditIcon />
+                            EDIT
+                        </Button>
                     </div >
 
-                    <button className="btn btn-danger" onClick={() => {
+                    <Button variant="contained" color="secondary" onClick={() => {
                         deleteRowConfirmation(cell)
                     }}>
+                        <DeleteIcon />
                         Delete
-                    </button>
+                    </Button>
                 </div>
 
             )
         }
-    ]);
+    ],);
 
     const [data, setData] = useState([]);
 
@@ -93,24 +107,21 @@ function Main() {
             await axios
                 .get("http://localhost:5000/api/v1/posts/all/")
                 .then((response) => {
-                    // check if the data is populated
                     console.log(response.data);
                     setData(response.data);
-                    // you tell it that you had the result
                     setLoadingData(false);
                 });
         }
         if (loadingData) {
-            // if the result is not ready so you make the axios call
             getData();
         }
-    }, [loadingData]);
+        setOnEdit(false)
+    }, [loadingData, show, cell, onEdit]);
 
     return (
         <div className="container">
-            {/* here you check if the state is loading otherwise if you wioll not call that you will get a blank page because the data is an empty array at the moment of mounting */}
             {loadingData ? (
-                <p>Loading Please wait...</p>
+                <div className="d-flex justify-content-center"><img src={Loader} alt="loading" ></img>  </div>
             ) : (
                 <FilteringTable columns={columns} data={data} defaultSorted={[
                     {
@@ -119,7 +130,7 @@ function Main() {
                     }
                 ]} />
             )}
-            {show ? (<EditUser cell={cell} checkModal={checkModal} />) : (<></>)}
+            {show ? (<EditUser cell={cell} checkModal={checkModal} setOnEdit={setOnEdit} />) : (<></>)}
         </div>
     );
 }
